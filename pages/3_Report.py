@@ -93,4 +93,35 @@ with tab3:
         
     date_name_rol_zip_df['Status'] = date_name_rol_zip_df['Duration_hours'].apply(status_marker)
 
-    st.dataframe(date_name_rol_zip_df,column_order=['Date','Name','Role','In_time','Out_time','Status'])
+    # Convert 'Date' column to datetime if it's not already
+date_name_rol_zip_df['Date'] = pd.to_datetime(date_name_rol_zip_df['Date'])
+
+# Set 'Date' as the index
+date_name_rol_zip_df.set_index('Date', inplace=True)
+
+# Step 5: Weekly Report
+weekly_report = date_name_rol_zip_df.groupby(['Name','Role', pd.Grouper(freq='W-Mon')]).agg(
+    Total_Present=pd.NamedAgg(column='Status', aggfunc=lambda x: (x == 'Present').sum()),
+    Total_Absent=pd.NamedAgg(column='Status', aggfunc=lambda x: (x == 'Absent').sum())
+).reset_index()
+
+# Step 6: Monthly Report
+monthly_report = date_name_rol_zip_df.groupby(['Name','Role', pd.Grouper(freq='M')]).agg(
+    Total_Present=pd.NamedAgg(column='Status', aggfunc=lambda x: (x == 'Present').sum()),
+    Total_Absent=pd.NamedAgg(column='Status', aggfunc=lambda x: (x == 'Absent').sum())
+).reset_index()
+
+# Reset the index in the original dataframe
+date_name_rol_zip_df.reset_index(inplace=True)
+
+# Display the weekly report
+st.subheader('Weekly Attendance Report')
+st.dataframe(weekly_report, column_order=['Date', 'Name', 'Role', 'Total_Present', 'Total_Absent'])
+
+# Display the monthly report
+st.subheader('Monthly Attendance Report')
+st.dataframe(monthly_report, column_order=['Date', 'Name', 'Role', 'Total_Present', 'Total_Absent'])
+
+# Your existing code to display daily report
+st.subheader('Daily Attendance Report')
+st.dataframe(date_name_rol_zip_df, column_order=['Date', 'Name', 'Role', 'In_time', 'Out_time', 'Status'])
