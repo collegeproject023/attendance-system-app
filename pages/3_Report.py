@@ -114,6 +114,10 @@ with tab3:
 # Reset the index in the original dataframe
     date_name_rol_zip_df.reset_index(inplace=True)
 
+# Display the daily report
+    st.subheader('Daily Attendance Report')
+    st.dataframe(date_name_rol_zip_df, column_order=['Date', 'Name', 'Role', 'In_time', 'Out_time', 'Status'])
+    
 # Display the weekly report
     st.subheader('Weekly Attendance Report')
     st.dataframe(weekly_report, column_order=['Date', 'Name', 'Role', 'Total_Present', 'Total_Absent'])
@@ -121,7 +125,3 @@ with tab3:
 # Display the monthly report
     st.subheader('Monthly Attendance Report')
     st.dataframe(monthly_report, column_order=['Date', 'Name', 'Role', 'Total_Present', 'Total_Absent'])
-
-# Your existing code to display daily report
-    st.subheader('Daily Attendance Report')
-    st.dataframe(date_name_rol_zip_df, column_order=['Date', 'Name', 'Role', 'In_time', 'Out_time', 'Status'])
